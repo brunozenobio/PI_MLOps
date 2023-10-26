@@ -1,6 +1,6 @@
-from funciones import *
+from funciones import userdata_func
 from fastapi import FastAPI
-
+import pandas as pd
 app = FastAPI()
 
 @app.get('/home')
@@ -14,7 +14,7 @@ def developer(desarrollador:str):
         return developer_func(desarrollador)
     except Exception as e:
         return {"Error":str(e)}
-'''   
+  
 @app.get('/user')
 def userdata(desarrollador:str):
     try:
@@ -22,6 +22,8 @@ def userdata(desarrollador:str):
     except Exception as e:
         return {"Error":str(e)}
     
+    
+''' 
 @app.get('/genero')
 def UserForGenre(desarrollador:str):
     try:

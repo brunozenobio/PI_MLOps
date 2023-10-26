@@ -12,13 +12,15 @@ with gzip.open('datasets/users_items.csv.gz', 'rb') as f:
     
 user_review = pd.read_csv('./datasets/user_reviews.csv')
     '''
-steam_games = pd.read_csv('./datasets/steam_games.csv')
-    
 
-steam_games.dropna(subset=['Year'],inplace=True)
-steam_games['Year'] = steam_games['Year'].astype(int)
 
 def developer_func(desarrollador:str):
+    
+    steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
+    
+
+    steam_games.dropna(subset=['Year'],inplace=True)
+    steam_games['Year'] = steam_games['Year'].astype(int)
     
     
     if desarrollador not in steam_games['developer'].values:
@@ -28,26 +30,35 @@ def developer_func(desarrollador:str):
     #items_por_año['Year'] = items_por_año['Year'].astype(int)
     
     # Contar juegos gratuitos (Free to Play) cuando 'price' es 0
-    items_por_año_free = steam_games[(steam_games['developer'] == desarrollador) & (steam_games['price'] == '0')].groupby('Year')['id'].count().reset_index()
+    items_por_año_free = steam_games[(steam_games['developer'] == desarrollador) & (steam_games['price'] == 0.0)].groupby('Year')['id'].count().reset_index()
     items_por_año_free.rename(columns={'id': 'Free to Play'}, inplace=True)
     
     # Uno las tablas de items_por_año e items_por_año_free
     merged_data = pd.merge(items_por_año, items_por_año_free, on='Year', how='left')
     
     # Calculo el contenido gratis por año
-    contenido_free = round(merged_data['Free to Play'] / merged_data['id'] * 100, 0)
+    contenido_free = round(merged_data['Free to Play'] / merged_data['id'] * 100, 2)
     
-    # Crear el DataFrame final
+    # Creo el DataFrame final
     resultado = {
-        'Año': merged_data['Year'].iloc[0],
-        'Cantidad de Items': merged_data['id'].iloc[0],
-        'Contenido Free': contenido_free.fillna(0).astype(str).iloc[0] + '%'  # Llenar NaN con 0 para evitar problemas
+        'Año': merged_data['Year'].tolist(),
+        'Cantidad de Items': merged_data['id'].tolist(),
+        'Contenido Free': f'{contenido_free.fillna(0).tolist()} %'  # Llenar NaN con 0 para evitar problemas
     }
     
     return resultado
 
 
 def userdata_func(User_id:str):
+    steam_games = pd.read_csv('./datasets/steam_games.csv')
+    
+
+    steam_games.dropna(subset=['Year'],inplace=True)
+    steam_games['Year'] = steam_games['Year'].astype(int)
+    user_review = pd.read_csv('./datasets/user_reviews.csv')
+    with gzip.open('datasets/users_items.csv.gz', 'rb') as f:
+        users_items = pd.read_csv(f, encoding='utf-8')
+    
     usuario = users_items.loc[users_items['user_id'].str.lower() == User_id.lower()]['items'] #---> user
     if not usuario.empty:
         usuario = usuario.iloc[0]
@@ -74,7 +85,7 @@ def userdata_func(User_id:str):
         'cantidad de items':join2.shape[0]
     }
     
-    
+'''    
 def UserForGenre_func(genero:str):
     genero = genero.lower()
     steam_games_cop = steam_games
@@ -126,3 +137,5 @@ def developer_rec_func(desarrolladora:str):
         true_value = func_5[func_5['recommend']==True]['recommend'].count()
         false_value = func_5[func_5['recommend']==False]['recommend'].count()
         return {desarrolladora:[f'Nevative = {false_value}',f'Positive = {true_value}']}
+        
+'''

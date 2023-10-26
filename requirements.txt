@@ -18,7 +18,6 @@ packaging
 pandas
 Pillow
 pip
-pkg_resources
 pydantic
 pydantic_core
 pyparsing

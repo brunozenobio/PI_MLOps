@@ -7,14 +7,14 @@ app = FastAPI()
 def saludar():
     return "Hola funciono"
 
-'''
-@app.get('/developer')
+
+@app.get('/developer/{desarrollador}')
 def developer(desarrollador:str):
     try:
         return developer_func(desarrollador)
     except Exception as e:
         return {"Error":str(e)}
-    
+'''   
 @app.get('/user')
 def userdata(desarrollador:str):
     try:

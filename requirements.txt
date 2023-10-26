@@ -17,6 +17,7 @@ numpy
 packaging
 pandas
 Pillow
+pip
 pkg_resources
 pydantic
 pydantic_core
@@ -33,4 +34,3 @@ typing_extensions
 tzdata
 uvicorn
 zipp
-

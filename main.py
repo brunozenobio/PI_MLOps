@@ -1,4 +1,4 @@
-#from funciones import *
+from funciones import developer_func
 from fastapi import FastAPI
 
 app = FastAPI()

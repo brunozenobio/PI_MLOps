@@ -3,19 +3,27 @@ from datetime import datetime
 import ast
 import gzip
 
+'''
 with gzip.open('datasets/user_items_proc.csv.gz', 'rb') as f:
     users_items_proc = pd.read_csv(f, encoding='utf-8')
     
 with gzip.open('datasets/users_items.csv.gz', 'rb') as f:
     users_items = pd.read_csv(f, encoding='utf-8')
     
-steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
+    
 user_review = pd.read_csv('./datasets/user_reviews.csv')
+    '''
 
-steam_games.dropna(subset='Year',inplace=True)
-steam_games['Year'] = steam_games['Year'].astype(int)
 
 def developer_func(desarrollador:str):
+    
+    steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
+    
+
+    steam_games.dropna(subset='Year',inplace=True)
+    steam_games['Year'] = steam_games['Year'].astype(int)
+    
+    
     if desarrollador not in steam_games['developer'].values:
         return "No se ha encontrado ese desarrollador"  # Devuelve el mensaje si no se encuentra en el DataFrame
     

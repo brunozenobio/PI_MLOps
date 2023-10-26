@@ -1,9 +1,9 @@
-from funciones import userdata_func
+from funciones import *
 from fastapi import FastAPI
 import pandas as pd
 app = FastAPI()
 
-@app.get('/home')
+@app.get('/')
 def saludar():
     return "Hola funciono"
 

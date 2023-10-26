@@ -29,7 +29,7 @@ def developer_func(desarrollador:str):
     items_por_año = steam_games[steam_games['developer'].str.lower() == desarrollador.lower()].groupby('Year')['id'].count().reset_index()
     #items_por_año['Year'] = items_por_año['Year'].astype(int)
     
-    # Contar juegos gratuitos (Free to Play) cuando 'price' es 0
+    # Cuento juegos gratuitos (Free to Play) cuando 'price' es 0
     items_por_año_free = steam_games[(steam_games['developer'] == desarrollador) & (steam_games['price'] == 0.0)].groupby('Year')['id'].count().reset_index()
     items_por_año_free.rename(columns={'id': 'Free to Play'}, inplace=True)
     

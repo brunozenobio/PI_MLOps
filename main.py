@@ -3,6 +3,11 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+@app.get('/home')
+def saludar():
+    return "Hola funciono"
+
+'''
 @app.get('/developer')
 def developer(desarrollador:str):
     try:
@@ -37,3 +42,4 @@ def developer_rec(año:str):
         return best_developer_year_func(año)
     except Exception as e:
         return {"Error":str(e)}
+'''

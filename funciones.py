@@ -50,40 +50,13 @@ def developer_func(desarrollador:str):
 
 
 def userdata_func(User_id:str):
-    steam_games = pd.read_csv('./datasets/steam_games.csv')
-    
-
-    steam_games.dropna(subset=['Year'],inplace=True)
-    steam_games['Year'] = steam_games['Year'].astype(int)
-    user_review = pd.read_csv('./datasets/user_reviews.csv')
-    with gzip.open('datasets/users_items.csv.gz', 'rb') as f:
-        users_items = pd.read_csv(f, encoding='utf-8')
-    
-    usuario = users_items.loc[users_items['user_id'].str.lower() == User_id.lower()]['items'] #---> user
-    if not usuario.empty:
-        usuario = usuario.iloc[0]
-    else:
-        return "No se ha encontrado ese Usuario"  # Devuelve el mensaje si no se encuentra en el DataFrame
-    data = ast.literal_eval(usuario)
-    result = pd.DataFrame(data)
-    result.dropna(inplace=True)
-    result['item_id'] = result['item_id'].astype(int)
-    
-    join = pd.merge(user_review,steam_games[['id','price']],left_on='item_id',right_on='id',how='left')
-    usuario_gasto_recomendacion = join.groupby('user_id').agg({
-                        'recommend':['count','sum'],
-                        }).reset_index()
-    usuario_gasto_recomendacion.columns = ['user_id','tot_recommend','true_recommend']
-    usuario = usuario_gasto_recomendacion[usuario_gasto_recomendacion['user_id'] == User_id]
-    
-    join2 = pd.merge(result[['item_name']],steam_games[['app_name','price']],left_on='item_name',right_on='app_name',how='left')
-    
-    return {
-        'Usuario X':User_id,
-        'Dinero gastado':f"{join2['price'].sum()} USD",
-        '% Recomendación Positiva':f"{(usuario['true_recommend'].iloc[0] / usuario['tot_recommend'].iloc[0] * 100)}%",
-        'cantidad de items':join2.shape[0]
-    }
+    items_reviews_users = pd.read_csv('datasets/items_reviews_users.csv')
+    user = items_reviews_users[items_reviews_users['user_id'].str.lower() == User_id.lower()]
+    return {'Usuario X':user['user_id'].iloc[0],
+            'Dinero gastado':f'{round(user["price"].iloc[0],2)} USD',
+            f'% de recomendación':f'{user["porcentaje_recomendaciones_true"].iloc[0]} %',
+            'cantidad de items': user['items_count'].iloc[0]                   
+            } 
     
 '''    
 def UserForGenre_func(genero:str):

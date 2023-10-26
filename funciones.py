@@ -28,7 +28,7 @@ def developer_func(desarrollador:str):
         return "No se ha encontrado ese desarrollador"  # Devuelve el mensaje si no se encuentra en el DataFrame
     
     items_por_año = steam_games[steam_games['developer'].lower() == desarrollador.lower()].groupby('year')['id'].count().reset_index()
-    items_por_año['Year'] = items_por_año['Year'].astype(int)
+    #items_por_año['Year'] = items_por_año['Year'].astype(int)
     
     # Contar juegos gratuitos (Free to Play) cuando 'price' es 0
     items_por_año_free = steam_games[(steam_games['developer'] == desarrollador) & (steam_games['price'] == '0')].groupby('Year')['id'].count().reset_index()

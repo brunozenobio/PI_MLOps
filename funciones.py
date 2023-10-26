@@ -12,6 +12,9 @@ with gzip.open('datasets/users_items.csv.gz', 'rb') as f:
 steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
 user_review = pd.read_csv('./datasets/user_reviews.csv')
 
+steam_games.dropna(subset='Year',inplace=True)
+steam_games['Year'] = steam_games['Year'].astype(int)
+
 def developer_func(desarrollador:str):
     if desarrollador not in steam_games['developer'].values:
         return "No se ha encontrado ese desarrollador"  # Devuelve el mensaje si no se encuentra en el DataFrame
@@ -94,3 +97,27 @@ def UserForGenre_func(genero:str):
     dic = {'Usuario ':user_max_hora,'Horas Jugadas':lista_resultados}
         
     return dic
+
+def best_developer_year_func(año:str):
+    func_4 = pd.merge(user_review,steam_games,left_on='item_id',right_on='id',how='inner')
+    func_4 = func_4[func_4['Year'] == año]
+    mejores_dev = func_4.groupby('developer')['recommend'].sum().reset_index().sort_values(by='recommend',ascending=False)
+    if mejores_dev.empty:
+        return 'No se enocntraron reviews para items que hayan salido ese año'
+    else:
+        puesto1 = mejores_dev.iloc[0][0]
+        puesto2 = mejores_dev.iloc[1][0]
+        puesto3 = mejores_dev.iloc[2][0]
+        puestos = {"Puesto 1": puesto1, "Puesto 2": puesto2, "Puesto 3": puesto3}
+        return puestos
+    
+    
+def developer_rec_func(desarrolladora:str):
+    func_5 = pd.merge(user_review,steam_games,left_on='item_id',right_on='id',how='inner')
+    func_5 = func_5[func_5['developer'].str.lower() == desarrolladora.lower()]
+    if func_5.empty:
+        return 'No se enocntraron reviews para items que hayan salido ese año'
+    else:
+        true_value = func_5[func_5['recommend']==True]['recommend'].count()
+        false_value = func_5[func_5['recommend']==False]['recommend'].count()
+        return {desarrolladora:[f'Nevative = {false_value}',f'Positive = {true_value}']}

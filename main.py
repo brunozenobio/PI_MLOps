@@ -23,3 +23,17 @@ def UserForGenre(desarrollador:str):
         return UserForGenre_func(desarrollador)
     except Exception as e:
         return {"Error":str(e)}
+    
+@app.get('/best_developer_year')   
+def best_developer_year(año:str):
+    try:
+        return best_developer_year_func(año)
+    except Exception as e:
+        return {"Error":str(e)}
+    
+@app.get('/recommend') 
+def developer_rec(año:str):
+    try:
+        return best_developer_year_func(año)
+    except Exception as e:
+        return {"Error":str(e)}

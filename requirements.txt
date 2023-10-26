@@ -17,7 +17,7 @@ numpy
 packaging
 pandas
 Pillow
-pkg_resources==0.0.1
+pkg_resources
 pydantic
 pydantic_core
 pyparsing

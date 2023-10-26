@@ -20,7 +20,7 @@ def developer_func(desarrollador:str):
     steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
     
 
-    steam_games.dropna(subset='Year',inplace=True)
+    steam_games.dropna(subset=['Year'],inplace=True)
     steam_games['Year'] = steam_games['Year'].astype(int)
     
     

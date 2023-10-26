@@ -1,4 +1,4 @@
-from funciones import *
+#from funciones import *
 from fastapi import FastAPI
 
 app = FastAPI()

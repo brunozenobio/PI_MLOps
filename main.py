@@ -16,18 +16,19 @@ def developer(desarrollador:str):
         return {"Error":str(e)}
   
 @app.get('/user')
-def userdata(desarrollador:str):
+def userdata(user:str):
     try:
-        return userdata_func(desarrollador)
+        return userdata_func(user)
     except Exception as e:
         return {"Error":str(e)}
     
     
-''' 
+
+
 @app.get('/genero')
-def UserForGenre(desarrollador:str):
+def UserForGenre(genero:str):
     try:
-        return UserForGenre_func(desarrollador)
+        return UserForGenre_func(genero)
     except Exception as e:
         return {"Error":str(e)}
     
@@ -44,4 +45,3 @@ def developer_rec(año:str):
         return best_developer_year_func(año)
     except Exception as e:
         return {"Error":str(e)}
-'''

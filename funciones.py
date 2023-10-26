@@ -10,7 +10,7 @@ with gzip.open('datasets/users_items.csv.gz', 'rb') as f:
     users_items = pd.read_csv(f, encoding='utf-8')
     
     
-user_review = pd.read_csv('./datasets/user_reviews.csv')
+
     '''
 
 
@@ -52,44 +52,41 @@ def developer_func(desarrollador:str):
 def userdata_func(User_id:str):
     items_reviews_users = pd.read_csv('datasets/items_reviews_users.csv')
     user = items_reviews_users[items_reviews_users['user_id'].str.lower() == User_id.lower()]
-    return {'Usuario X':user['user_id'].iloc[0],
-            'Dinero gastado':f'{round(user["price"].iloc[0],2)} USD',
-            f'% de recomendación':f'{user["porcentaje_recomendaciones_true"].iloc[0]} %',
-            'cantidad de items': user['items_count'].iloc[0]                   
-            } 
+    if user.empty:
+        return "Usuario no encontrado"
     
-'''    
+    porcentaje_recomendaciones_numerico = user["porcentaje_recomendaciones_true"]
+    
+    resultado =  {
+        'Usuario X': str(user['user_id'].iloc[0]),
+        'Dinero gastado': f'{str(user["price"].iloc[0])} USD',
+        ' de recomendación': str(porcentaje_recomendaciones_numerico.iloc[0]),
+        'Cantidad de items': str(user['items_count'].iloc[0])
+    }
+    return resultado
+    
+
 def UserForGenre_func(genero:str):
-    genero = genero.lower()
-    steam_games_cop = steam_games
-    steam_games_cop.columns = steam_games.columns.str.lower()
-    generos = steam_games.drop(columns=['app_name','release_date','specs','price','id','developer','year']).columns
-    if genero not in generos:
-        return "No existe ese género"
-    # FALTA ARREGLAR QUE EL GENERO PUEDA SER INGRESADO CON MAYUSCULAS O MINUSCULAS    
-    usuarios_games = pd.merge(users_items_proc,steam_games,left_on='item_name',right_on='app_name',how='inner')
-    usuarios_games = usuarios_games[usuarios_games[genero]==1]
-    user_max_hor = usuarios_games.groupby(['user_id'])['playtime_forever'].sum().reset_index()
-    user_max_hora = user_max_hor.loc[user_max_hor['playtime_forever'].idxmax(), 'user_id']
-    usuario_hora = usuarios_games[usuarios_games['user_id'] == user_max_hora].groupby('year')['playtime_forever'].sum().reset_index()
-    lista_resultados = []
-    for index, row in usuario_hora.iterrows():
-        if row['playtime_forever'] == 0.0:
-            continue
-            
-        diccionario = {
-            'Año':int(row['year']),
-            'Horas': int(row['playtime_forever'])
-        }
-        lista_resultados.append(diccionario)
+    users_gen = pd.read_csv('./datasets/max_por_gen.csv')
+    if genero.lower() not in users_gen['Género'].iloc[0].lower():
+        return "No se encontró ese genero"
+    
+    gen = users_gen[users_gen['Género'].str.lower() == genero]
         
-    dic = {'Usuario ':user_max_hora,'Horas Jugadas':lista_resultados}
-        
-    return dic
+    return {
+        'Usuario':gen['Usuario'].tolist(),
+        'Horas jugadas':gen['Año_Horas'].tolist()     
+    }
+    
+    
+    
 
 def best_developer_year_func(año:str):
+    steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
+    user_review = pd.read_csv('./datasets/user_reviews.csv')
+    
     func_4 = pd.merge(user_review,steam_games,left_on='item_id',right_on='id',how='inner')
-    func_4 = func_4[func_4['Year'] == año]
+    func_4 = func_4[func_4['Year'] ==float(año)]
     mejores_dev = func_4.groupby('developer')['recommend'].sum().reset_index().sort_values(by='recommend',ascending=False)
     if mejores_dev.empty:
         return 'No se enocntraron reviews para items que hayan salido ese año'
@@ -101,14 +98,22 @@ def best_developer_year_func(año:str):
         return puestos
     
     
-def developer_rec_func(desarrolladora:str):
-    func_5 = pd.merge(user_review,steam_games,left_on='item_id',right_on='id',how='inner')
-    func_5 = func_5[func_5['developer'].str.lower() == desarrolladora.lower()]
+def developer_rec_func(desarrolladora: str):
+    steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
+    user_review = pd.read_csv('./datasets/user_reviews.csv')
+    
+    
+    func_5 = pd.merge(user_review, steam_games, left_on='item_id', right_on='id', how='inner')
+    desarrolladora = str(desarrolladora).lower()  
+    
+    func_5 = func_5[func_5['developer'].str.lower() == desarrolladora]
+    
     if func_5.empty:
-        return 'No se enocntraron reviews para items que hayan salido ese año'
+        return 'No se encontraron reviews para items que hayan salido ese año'
     else:
-        true_value = func_5[func_5['recommend']==True]['recommend'].count()
-        false_value = func_5[func_5['recommend']==False]['recommend'].count()
-        return {desarrolladora:[f'Nevative = {false_value}',f'Positive = {true_value}']}
+        true_value = func_5[func_5['sentiment_analysis'] == 2]['sentiment_analysis'].count()
+        false_value = func_5[func_5['sentiment_analysis'] == 0]['sentiment_analysis'].count()
+        return {desarrolladora: [f'Negative = {false_value}', f'Positive = {true_value}']}
+    
+    
         
-'''

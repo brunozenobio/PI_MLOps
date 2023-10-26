@@ -1,5 +1,4 @@
 import pandas as pd
-from datetime import datetime
 import ast
 import gzip
 
@@ -13,21 +12,19 @@ with gzip.open('datasets/users_items.csv.gz', 'rb') as f:
     
 user_review = pd.read_csv('./datasets/user_reviews.csv')
     '''
+steam_games = pd.read_csv('./datasets/steam_games.csv')
+    
 
+steam_games.dropna(subset=['Year'],inplace=True)
+steam_games['Year'] = steam_games['Year'].astype(int)
 
 def developer_func(desarrollador:str):
-    
-    steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
-    
-
-    steam_games.dropna(subset=['Year'],inplace=True)
-    steam_games['Year'] = steam_games['Year'].astype(int)
     
     
     if desarrollador not in steam_games['developer'].values:
         return "No se ha encontrado ese desarrollador"  # Devuelve el mensaje si no se encuentra en el DataFrame
     
-    items_por_año = steam_games[steam_games['developer'].lower() == desarrollador.lower()].groupby('year')['id'].count().reset_index()
+    items_por_año = steam_games[steam_games['developer'].str.lower() == desarrollador.lower()].groupby('Year')['id'].count().reset_index()
     #items_por_año['Year'] = items_por_año['Year'].astype(int)
     
     # Contar juegos gratuitos (Free to Play) cuando 'price' es 0
@@ -42,7 +39,7 @@ def developer_func(desarrollador:str):
     
     # Crear el DataFrame final
     resultado = {
-        'Año': merged_data['year'].iloc[0],
+        'Año': merged_data['Year'].iloc[0],
         'Cantidad de Items': merged_data['id'].iloc[0],
         'Contenido Free': contenido_free.fillna(0).astype(str).iloc[0] + '%'  # Llenar NaN con 0 para evitar problemas
     }
@@ -51,7 +48,7 @@ def developer_func(desarrollador:str):
 
 
 def userdata_func(User_id:str):
-    usuario = users_items.loc[users_items['user_id'].lower() == User_id.lower()]['items'] #---> user
+    usuario = users_items.loc[users_items['user_id'].str.lower() == User_id.lower()]['items'] #---> user
     if not usuario.empty:
         usuario = usuario.iloc[0]
     else:

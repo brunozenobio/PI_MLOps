@@ -103,6 +103,7 @@ def developer_rec_func(desarrolladora:str):
     user_review = pd.read_csv('./datasets/user_reviews.csv')
     func_5 = pd.merge(user_review,steam_games,left_on='item_id',right_on='id',how='inner')
     func_5['developer'] = func_5['developer'].str.lower()
+    
     desarrolladora = desarrolladora.lower()
     func_5 = func_5[func_5['developer'] == desarrolladora]
     if func_5.empty:
@@ -110,7 +111,7 @@ def developer_rec_func(desarrolladora:str):
     else:
         true_value = func_5[func_5['sentiment_analysis']==2]['sentiment_analysis'].count()
         false_value = func_5[func_5['sentiment_analysis']==0]['sentiment_analysis'].count()
-        return {desarrolladora:[f'Nevative = {false_value}',f'Positive = {true_value}']}
+        return {desarrolladora:[f'Negative = {int(false_value)}',f'Positive = {int(true_value)}']}
     
     
         

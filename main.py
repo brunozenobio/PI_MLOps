@@ -4,8 +4,9 @@ import pandas as pd
 app = FastAPI()
 
 @app.get('/')
-def saludar():
-    return "Hola funciono"
+def bienvenida():
+    return {'API de consultas a una base de datos de Steam'}
+
 
 
 @app.get('/developer/{desarrollador}')
@@ -15,7 +16,7 @@ def developer(desarrollador:str):
     except Exception as e:
         return {"Error":str(e)}
   
-@app.get('/user')
+@app.get('/user{user}')
 def userdata(user:str):
     try:
         return userdata_func(user)
@@ -32,16 +33,16 @@ def UserForGenre(genero:str):
     except Exception as e:
         return {"Error":str(e)}
     
-@app.get('/best_developer_year')   
-def best_developer_year(año:str):
+@app.get('/best_developer_year/{best_developer_year}')   
+def best_developer_year(best_developer_year:str):
     try:
-        return best_developer_year_func(año)
+        return best_developer_year_func(best_developer_year)
     except Exception as e:
         return {"Error":str(e)}
     
-@app.get('/recommend') 
-def developer_rec(año:str):
+@app.get('/recommend/{developer_rec}') 
+def developer_rec(developer_rec:str):
     try:
-        return best_developer_year_func(año)
+        return developer_rec_func(developer_rec)
     except Exception as e:
         return {"Error":str(e)}

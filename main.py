@@ -33,10 +33,10 @@ def UserForGenre(genero:str):
     except Exception as e:
         return {"Error":str(e)}
     
-@app.get('/best_developer_year/{año}')   
-def best_developer_year(año:str):
+@app.get('/best_developer_year/{year}')   
+def best_developer_year(year:int):
     try:
-        return best_developer_year_func(año)
+        return best_developer_year_func(year)
     except Exception as e:
         return {"Error":str(e)}
     

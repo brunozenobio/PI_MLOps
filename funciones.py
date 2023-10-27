@@ -13,7 +13,7 @@ def developer_func(desarrollador:str):
     steam_games['Year'] = steam_games['Year'].astype(int)
     
     
-    if desarrollador not in steam_games['developer'].values:
+    if desarrollador.capitalize() not in steam_games['developer'].values:
         return "No se ha encontrado ese desarrollador"  # Devuelve el mensaje si no se encuentra en el DataFrame
     
     items_por_año = steam_games[steam_games['developer'].str.lower() == desarrollador.lower()].groupby('Year')['id'].count().reset_index()
@@ -68,15 +68,15 @@ def UserForGenre_func(genero:str):
         'Horas jugadas':gen['Año_Horas'].tolist()     
     }
     
-    
-    
 
-def best_developer_year_func(año:int):
-    steam_games = pd.read_csv('./datasets/steam_games.csv')
+def best_developer_year_func(year:int):
+    steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
     user_review = pd.read_csv('./datasets/user_reviews.csv')
-    steam_games['Year'] = steam_games['Year'].astype(float)
+    
+    steam_games.dropna(inplace =True)
+    steam_games['Year'] = steam_games['Year'].astype(int)
     func_4 = pd.merge(user_review,steam_games,left_on='item_id',right_on='id',how='inner')
-    func_4 = func_4[func_4['Year'] ==float(año)]
+    func_4 = func_4[func_4['Year'] ==year]
     mejores_dev = func_4.groupby('developer')['recommend'].sum().reset_index().sort_values(by='recommend',ascending=False)
     if mejores_dev.empty:
         return 'No se enocntraron reviews para items que hayan salido ese año'
@@ -84,7 +84,7 @@ def best_developer_year_func(año:int):
         puesto1 = mejores_dev.iloc[0][0]
         puesto2 = mejores_dev.iloc[1][0]
         puesto3 = mejores_dev.iloc[2][0]
-        puestos = {"Puesto 1": puesto1, "Puesto 2": puesto2, "Puesto 3": puesto3}
+        puestos = {"Puesto 1": str(puesto1), "Puesto 2":str(puesto2), "Puesto 3": str(puesto3)}
         return puestos
     
     
@@ -124,3 +124,5 @@ def recomendacion_jueg(id:int):
         juegos_recomendados[clave] = valor 
     return juegos_recomendados
     
+    
+

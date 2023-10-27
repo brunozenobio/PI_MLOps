@@ -58,7 +58,7 @@ def userdata_func(User_id:str):
 
 def UserForGenre_func(genero:str):
     users_gen = pd.read_csv('./datasets/max_por_gen.csv')
-    if genero.lower() in [x.lower() for x in df_resultados['Género'].tolist()]
+    if genero.lower() in [x.lower() for x in df_resultados['Género'].tolist()]:
         return "No se encontró ese genero"
     
     gen = users_gen[users_gen['Género'].str.lower() == genero]

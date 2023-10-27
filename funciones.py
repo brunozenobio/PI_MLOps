@@ -100,9 +100,42 @@ def userdata_func(User_id:str):
     
 
 def UserForGenre_func(genero:str):
-     """
+    """
     Retorna al usuario que acumula más horas para
     un género dado y la cantidad de horas por año.
+    ----------
+    genero : str
+
+    Returns 
+    -------
+   {
+  "Usuario": [
+    "shinomegami"
+     ],
+    "Horas jugadas": [
+    "[{'Año': 1988.0, 'Horas': 136.0}, {'Año': 1991.0, 'Horas': 0.0}, {'Año': 1992.0, 'Horas': 0.0}, {'Año': 1993.0, 'Horas': 22001.0}, {'Año': 1994.0, 'Horas': 0.0}, {'Año': 1995.0, 'Horas': 2.0}, {'Año': 1996.0, 'Horas': 1161.0}, {'Año': 1997.0, 'Horas': 99.0}, {'Año': 1998.0, 'Horas': 3716.0}, {'Año': 1999.0, 'Horas': 317.0}, {'Año': 2000.0, 'Horas': 10775.0}, {'Año': 2001.0, 'Horas': 2431.0}, {'Año': 2002.0, 'Horas': 2434.0}, {'Año': 2003.0, 'Horas': 532817.0}, {'Año': 2004.0, 'Horas': 120.0}, {'Año': 2005.0, 'Horas': 343.0}, {'Año': 2006.0, 'Horas': 3485.0}, {'Año': 2007.0, 'Horas': 68354.0}, {'Año': 2008.0, 'Horas': 1485.0}, {'Año': 2009.0, 'Horas': 209854.0}, {'Año': 2010.0, 'Horas': 11418.0}, {'Año': 2011.0, 'Horas': 92057.0}, {'Año': 2012.0, 'Horas': 30400.0}, {'Año': 2013.0, 'Horas': 156301.0}, {'Año': 2014.0, 'Horas': 109051.0}, {'Año': 2015.0, 'Horas': 147323.0}, {'Año': 2016.0, 'Horas': 42744.0}, {'Año': 2017.0, 'Horas': 135.0}]"
+    ]
+    }
+    """
+    users_gen = pd.read_csv('./datasets/max_por_gen.csv')
+    if genero.lower() not in users_gen['Género'].str.lower():
+        return "No se encontró ese genero"
+    
+    gen = users_gen[users_gen['Género'].str.lower() == genero]
+        
+    return {
+        'Usuario':gen['Usuario'].tolist(),
+        'Horas jugadas':gen['Año_Horas'].tolist()     
+    }
+    
+    
+    
+
+def best_developer_year_func(año:int):
+    
+     """
+    Retorna los tres desarrolladores con más juegos 
+    recomendados por usuarios para un año dado.
     ----------
     genero : str
 
@@ -119,22 +152,6 @@ def UserForGenre_func(genero:str):
     """
     
     
-    
-    users_gen = pd.read_csv('./datasets/max_por_gen.csv')
-    if genero.lower() not in users_gen['Género'].str.lower():
-        return "No se encontró ese genero"
-    
-    gen = users_gen[users_gen['Género'].str.lower() == genero]
-        
-    return {
-        'Usuario':gen['Usuario'].tolist(),
-        'Horas jugadas':gen['Año_Horas'].tolist()     
-    }
-    
-    
-    
-
-def best_developer_year_func(año:int):
     steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
     user_review = pd.read_csv('./datasets/user_reviews.csv')
     

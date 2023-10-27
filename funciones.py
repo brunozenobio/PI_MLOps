@@ -1,17 +1,6 @@
 import pandas as pd
-import ast
-import gzip
 
-'''
-with gzip.open('datasets/user_items_proc.csv.gz', 'rb') as f:
-    users_items_proc = pd.read_csv(f, encoding='utf-8')
-    
-with gzip.open('datasets/users_items.csv.gz', 'rb') as f:
-    users_items = pd.read_csv(f, encoding='utf-8')
-    
-    
 
-    '''
 
 
 def developer_func(desarrollador:str):

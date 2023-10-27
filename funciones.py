@@ -74,9 +74,9 @@ def UserForGenre_func(genero:str):
 def best_developer_year_func(año:int):
     steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
     user_review = pd.read_csv('./datasets/user_reviews.csv')
-    
+    steam_games['Year'] = steam_games['Year'].astype(int)
     func_4 = pd.merge(user_review,steam_games,left_on='item_id',right_on='id',how='inner')
-    func_4 = func_4[func_4['Year'] ==float(año)]
+    func_4 = func_4[func_4['Year'] ==int(año)]
     mejores_dev = func_4.groupby('developer')['recommend'].sum().reset_index().sort_values(by='recommend',ascending=False)
     if mejores_dev.empty:
         return 'No se enocntraron reviews para items que hayan salido ese año'

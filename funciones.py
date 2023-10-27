@@ -1,5 +1,5 @@
 import pandas as pd
-
+import pickle
 
 
 
@@ -50,7 +50,7 @@ def userdata_func(User_id:str):
     resultado =  {
         'Usuario X': str(user['user_id'].iloc[0]),
         'Dinero gastado': f'{str(user["price"].iloc[0])} USD',
-        ' de recomendación': str(porcentaje_recomendaciones_numerico.iloc[0]),
+        'Porcentaje de recomendación': str(porcentaje_recomendaciones_numerico.iloc[0]),
         'Cantidad de items': str(user['items_count'].iloc[0])
     }
     return resultado
@@ -103,5 +103,25 @@ def developer_rec_func(desarrolladora:str):
         false_value = func_5[func_5['sentiment_analysis']==0]['sentiment_analysis'].count()
         return {desarrolladora:[f'Negative = {int(false_value)}',f'Positive = {int(true_value)}']}
     
+    
+def recomendacion_jueg(id:int):
+    steam_games = pd.read_csv('./datasets/steam_games.csv')
+    variables = steam_games.drop(columns=['app_name','release_date','specs','price','id','Year','Accounting','developer']).columns
+    developer_dummies = pd.get_dummies(steam_games['developer'], prefix='developer')
+    data_encoded = pd.concat([steam_games, developer_dummies], axis=1)
+    X = data_encoded[list(variables)]
+    with open('./model/recommend-item-item.pkl', 'rb') as archivo_pkl:
+        knload = pickle.load(archivo_pkl)
+    if id not in list(steam_games['id']):
+        return "Ese id no pertence a ningun item"
+    game_index = steam_games[steam_games['id'] == 761140].index[0]
+    distances, indices = knload.kneighbors([X.iloc[game_index]])
+    juegos_recomendados = {}
+
+    for i in range(len(indices[0])):
+        clave = f"juego {i + 1}" 
+        valor = steam_games.iloc[indices[0][i]]['app_name'] 
+        juegos_recomendados[clave] = valor 
+    return juegos_recomendados
     
         

@@ -98,22 +98,19 @@ def best_developer_year_func(año:str):
         return puestos
     
     
-def developer_rec_func(desarrolladora: str):
+def developer_rec_func(desarrolladora:str):
     steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
     user_review = pd.read_csv('./datasets/user_reviews.csv')
-    
-    
-    func_5 = pd.merge(user_review, steam_games, left_on='item_id', right_on='id', how='inner')
-    desarrolladora = str(desarrolladora).lower()  
-    
-    func_5 = func_5[func_5['developer'].str.lower() == desarrolladora]
-    
+    func_5 = pd.merge(user_review,steam_games,left_on='item_id',right_on='id',how='inner')
+    func_5['developer'] = func_5['developer'].str.lower()
+    desarrolladora = desarrolladora.lower()
+    func_5 = func_5[func_5['developer'] == desarrolladora]
     if func_5.empty:
-        return 'No se encontraron reviews para items que hayan salido ese año'
+        return 'No se enocntraron reviews para items que hayan salido ese año'
     else:
-        true_value = func_5[func_5['sentiment_analysis'] == 2]['sentiment_analysis'].count()
-        false_value = func_5[func_5['sentiment_analysis'] == 0]['sentiment_analysis'].count()
-        return {desarrolladora: [f'Negative = {false_value}', f'Positive = {true_value}']}
+        true_value = func_5[func_5['sentiment_analysis']==2]['sentiment_analysis'].count()
+        false_value = func_5[func_5['sentiment_analysis']==0]['sentiment_analysis'].count()
+        return {desarrolladora:[f'Nevative = {false_value}',f'Positive = {true_value}']}
     
     
         

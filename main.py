@@ -49,8 +49,17 @@ def developer_rec(developer_rec:str):
 
 
 @app.get('/recomendacion_games/{user}') 
-def recomendacion(user:str):
+def ser_recommend(user:str):
+    """
+    Esta función recomienda los 5 mejores juegos para un usuario especificado.
+
+    Params:
+    user:str - nombre del usuario al que se le recomendarán los juegos.
+
+    Returns:
+    Diccionario con los nombres de los 5 juegos recomendados.
+    """
     try:
-        return recomendacion_jueg(user)
+        return user_recommend_fuc(user)
     except Exception as e:
         return {"Error":str(e)}

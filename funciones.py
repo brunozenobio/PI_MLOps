@@ -104,28 +104,8 @@ def developer_rec_func(desarrolladora:str):
         return {desarrolladora:[f'Negative = {int(false_value)}',f'Positive = {int(true_value)}']}
     
     
-def recomendacion_jueg(id:int):
-    steam_games = pd.read_csv('./datasets/steam_games.csv')
-    variables = steam_games.drop(columns=['app_name','release_date','specs','price','id','Year','Accounting','developer']).columns
-    developer_dummies = pd.get_dummies(steam_games['developer'], prefix='developer')
-    data_encoded = pd.concat([steam_games, developer_dummies], axis=1)
-    X = data_encoded[list(variables)]
-    with open('./model/recommend-item-item.pkl', 'rb') as archivo_pkl:
-        knload = pickle.load(archivo_pkl)
-    if id not in list(steam_games['id']):
-        return "Ese id no pertence a ningun item"
-    game_index = steam_games[steam_games['id'] == 761140].index[0]
-    distances, indices = knload.kneighbors([X.iloc[game_index]])
-    juegos_recomendados = {}
-
-    for i in range(len(indices[0])):
-        clave = f"juego {i + 1}" 
-        valor = steam_games.iloc[indices[0][i]]['app_name'] 
-        juegos_recomendados[clave] = valor 
-    return juegos_recomendados
     
-    
-def user_recommend(user:str):
+def user_recommend_fuc(user:str):
     """
     Esta función recomienda los 5 mejores juegos para un usuario especificado.
 

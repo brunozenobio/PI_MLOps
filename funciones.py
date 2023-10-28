@@ -125,9 +125,9 @@ def user_recommend_fuc(user:str):
     # Cargo la lista de juegos de steam
     df_steam = pd.read_csv('./datasets/steam_games.csv')
 
-    user = user_reviews[user_reviews['user_id'] == user]['user_id_num'].iloc[0]
+    user_rec = user_reviews[user_reviews['user_id'] == user]['user_id_num'].iloc[0]
     # Predecir la puntuación del usuario para cada juego
-    predictions = [model.predict(user, item_id) for item_id in user_reviews['item_id']]
+    predictions = [model.predict(user_rec, item_id) for item_id in user_reviews['item_id']]
     recommendations = sorted(predictions, key=lambda x: x.est, reverse=True) # Obtén las mejores 5 recomendaciones
 
     # Convertir las recomendaciones en un DataFrame de pandas

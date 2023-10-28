@@ -1,7 +1,7 @@
 import pandas as pd
 import pickle
-
-
+from surprise import SVD
+from sklearn.preprocessing import LabelEncoder
 
 def developer_func(desarrollador:str):
     

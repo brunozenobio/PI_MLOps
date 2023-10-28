@@ -48,9 +48,9 @@ def developer_rec(developer_rec:str):
         return {"Error":str(e)}
 
 
-@app.get('/recomendacion_games/{id}') 
-def recomendacion(id:int):
+@app.get('/recomendacion_games/{user}') 
+def recomendacion(user:str):
     try:
-        return recomendacion_jueg(id)
+        return recomendacion_jueg(user)
     except Exception as e:
         return {"Error":str(e)}

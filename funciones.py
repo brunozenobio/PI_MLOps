@@ -125,4 +125,54 @@ def recomendacion_jueg(id:int):
     return juegos_recomendados
     
     
+def user_recommend(user:str):
+    """
+    Esta función recomienda los 5 mejores juegos para un usuario especificado.
 
+    Params:
+    user:str - nombre del usuario al que se le recomendarán los juegos.
+
+    Returns:
+    Diccionario con los nombres de los 5 juegos recomendados.
+    """
+
+    # Abrir y cargar el modelo SVD de archivos
+    with open('./model/SVD_model.pkl', 'rb') as archivo:
+        model = pickle.load(archivo)
+
+    # Cargo las reseñas de usuarios 
+    user_reviews = pd.read_csv('./datasets/user_reviews.csv',usecols=['user_id','item_id','sentiment_analysis'])
+
+    # Cargo la lista de juegos de steam
+    df_steam = pd.read_csv('./datasets/steam_games.csv')
+
+    # Creo un label enconder para usuario
+    label_encoder = LabelEncoder()
+    user_id = label_encoder.fit_transform([user])
+
+    # Predecir la puntuación del usuario para cada juego
+    predictions = [model.predict(user, item_id) for item_id in user_reviews['item_id']]
+    recommendations = sorted(predictions, key=lambda x: x.est, reverse=True) # Obtén las mejores 5 recomendaciones
+
+    # Ordenar las predicciones en orden descendente de la estimación y recoger las primeras 5
+    recommendations = sorted(predictions, key=lambda x: x.est, reverse=True)
+
+    # Convertir las recomendaciones en un DataFrame de pandas
+    recommendations = pd.DataFrame(recommendations)
+
+    # Eliminar duplicados basados en el id del juego
+    recommendations = recommendations.drop_duplicates(subset='iid')
+
+    # Mergeo la lista de juegos con las recomendaciones en base al id del juego
+    merge = pd.merge(df_steam[['app_name','id']],recommendations,left_on='id',right_on='iid',how='right')
+
+    rec = merge[['app_name']].dropna()[:5].values.tolist()
+
+    # Retornar los juegos como un diccionario
+    return {
+        'Recomendacion 1 ': rec[0][0],
+        'Recomendacion 2 ': rec[1][0],
+        'Recomendacion 3 ': rec[2][0],
+        'Recomendacion 4 ': rec[3][0],
+        'Recomendacion 5 ': rec[4][0]
+    }

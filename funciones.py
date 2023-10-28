@@ -60,7 +60,7 @@ def UserForGenre_func(genero:str):
     if genero.lower() not in [x.lower() for x in users_gen['Género'].tolist()]:
         return "No se encontró ese genero"
     
-    gen = users_gen[users_gen['Género'].str.lower() == genero]
+    gen = users_gen[users_gen['Género'].str.lower() == genero.lower()]
         
     return {
         'Usuario':gen['Usuario'].tolist(),

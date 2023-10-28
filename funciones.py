@@ -127,9 +127,9 @@ def user_recommend_fuc(user:str):
     df_steam = pd.read_csv('./datasets/steam_games.csv')
 
     # Creo un label enconder para usuario
-    #label_encoder = LabelEncoder()
-    #user_id = label_encoder.fit_transform([user])
-
+    label_encoder = LabelEncoder()
+    user_reviews['user_id_encode'] = label_encoder.fit_transform(user_reviews['user_id'])
+    user = user_reviews[user_reviews['user_id'] == user]['user_id_encode'].iloc[0]
     # Predecir la puntuación del usuario para cada juego
     predictions = [model.predict(user, item_id) for item_id in user_reviews['item_id']]
     recommendations = sorted(predictions, key=lambda x: x.est, reverse=True) # Obtén las mejores 5 recomendaciones

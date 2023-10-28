@@ -2,7 +2,6 @@ from funciones import *
 from fastapi import FastAPI
 import pandas as pd
 from surprise import SVD
-from sklearn.preprocessing import LabelEncoder
 app = FastAPI()
 
 @app.get('/')

@@ -1,7 +1,6 @@
 import pandas as pd
 import pickle
 from surprise import SVD
-from sklearn.preprocessing import LabelEncoder
 
 def developer_func(desarrollador:str):
     
@@ -121,15 +120,14 @@ def user_recommend_fuc(user:str):
         model = pickle.load(archivo)
 
     # Cargo las reseñas de usuarios 
-    user_reviews = pd.read_csv('./datasets/user_reviews.csv',usecols=['user_id','item_id','sentiment_analysis'])
+    user_reviews = pd.read_csv('./datasets/user_reviews_model.csv',usecols=['user_id','user_id_num','item_id','sentiment_analysis'])
 
     # Cargo la lista de juegos de steam
     df_steam = pd.read_csv('./datasets/steam_games.csv')
 
     # Creo un label enconder para usuario
     label_encoder = LabelEncoder()
-    user_reviews['user_id_encode'] = label_encoder.fit_transform(user_reviews['user_id'])
-    user = user_reviews[user_reviews['user_id'] == user]['user_id_encode'].iloc[0]
+    user = user_reviews[user_reviews['user_id'] == user]['user_id_num'].iloc[0]
     # Predecir la puntuación del usuario para cada juego
     predictions = [model.predict(user, item_id) for item_id in user_reviews['item_id']]
     recommendations = sorted(predictions, key=lambda x: x.est, reverse=True) # Obtén las mejores 5 recomendaciones

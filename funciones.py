@@ -17,7 +17,7 @@ def developer_func(desarrollador:str):
         return "No se ha encontrado ese desarrollador"  # Devuelve el mensaje si no se encuentra en el DataFrame
     
     items_por_año = steam_games[steam_games['developer'].str.lower() == desarrollador.lower()].groupby('Year')['id'].count().reset_index()
-    #items_por_año['Year'] = items_por_año['Year'].astype(int)
+    
     
     # Cuento juegos gratuitos (Free to Play) cuando 'price' es 0
     items_por_año_free = steam_games[(steam_games['developer'] == desarrollador) & (steam_games['price'] == 0.0)].groupby('Year')['id'].count().reset_index()
@@ -131,11 +131,8 @@ def user_recommend_fuc(user:str):
     user_id = label_encoder.fit_transform([user])
 
     # Predecir la puntuación del usuario para cada juego
-    predictions = [model.predict(user, item_id) for item_id in user_reviews['item_id']]
+    predictions = [model.predict(user_id, item_id) for item_id in user_reviews['item_id']]
     recommendations = sorted(predictions, key=lambda x: x.est, reverse=True) # Obtén las mejores 5 recomendaciones
-
-    # Ordenar las predicciones en orden descendente de la estimación y recoger las primeras 5
-    recommendations = sorted(predictions, key=lambda x: x.est, reverse=True)
 
     # Convertir las recomendaciones en un DataFrame de pandas
     recommendations = pd.DataFrame(recommendations)

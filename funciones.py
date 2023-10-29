@@ -2,7 +2,7 @@ import pandas as pd
 import pickle
 from surprise import SVD
 from sklearn.metrics.pairwise import cosine_similarity
-
+import numpy as np
 
 ####### FUNCION 1 ########
 def developer_func(desarrollador:str):

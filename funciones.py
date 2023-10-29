@@ -1,6 +1,7 @@
 import pandas as pd
 import pickle
 from surprise import SVD
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 ####### FUNCION 1 ########

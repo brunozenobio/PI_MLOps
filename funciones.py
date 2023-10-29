@@ -209,6 +209,8 @@ def user_recommend_fuc(user:str):
 ####### FUNCION 7 ########
 
 def item_rec(app_name:int):
+    steam_games = pd.read_csv('./datasets/steam_games.csv')
+
     # Creamos una lista con cada género de videojuego disponible en la base de datos
     generos = list(steam_games.drop(columns=['app_name','price','id','developer','Accounting','Year']).columns)
 

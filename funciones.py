@@ -5,7 +5,7 @@ from surprise import SVD
 def developer_func(desarrollador:str):
     
     
-    steam_games = pd.read_csv('./datasets/steam_games.csv', parse_dates=['release_date'])
+    steam_games = pd.read_csv('./datasets/steam_games.csv')
     
 
     steam_games.dropna(subset=['Year'],inplace=True)

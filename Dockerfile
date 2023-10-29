@@ -7,9 +7,9 @@ WORKDIR /app
 # Copia el archivo requirements.txt y main.py al contenedor
 COPY requirements.txt /app
 COPY main.py /app
-COPY dataset/*
-COPY funciones.py
-COPY model/*
+COPY dataset/* /app
+COPY funciones.py /app
+COPY model/* /app
 # Instala las dependencias del proyecto
 RUN pip install -r requirements.txt
 

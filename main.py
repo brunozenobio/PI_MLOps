@@ -94,7 +94,7 @@ def ser_recommend(user:str):
 
 
 @app.get('/recommend_item/{item}') 
-def ser_recommend(item_id:int):
+def item_recommend(item_id:int):
     """
     Esta función recomienda 5 items  dado un item especifico.
 
@@ -105,6 +105,6 @@ def ser_recommend(item_id:int):
     Diccionario con los nombres de los 5 juegos recomendados.
     """
     try:
-        return user_recommend_fuc(item_id)
+        return item_rec(item_id)
     except Exception as e:
         return {"Error":str(e)}

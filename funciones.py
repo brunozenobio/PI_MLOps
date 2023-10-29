@@ -123,7 +123,7 @@ def user_recommend_fuc(user:str):
 
     # Cargo las reseñas de usuarios 
     user_reviews = pd.read_csv('./datasets/user_reviews_model.csv',usecols=['user_id','user_id_num','item_id'])
-    if user.lower() in list(user_reviews['user_id'].str.strip().str.lower()):
+    if user.strip().lower() in list(user_reviews['user_id'].str.strip().str.lower()):
         return {'No hay recomendacioenes para ese usuario'}
     # Cargo la lista de juegos de steam
     df_steam = pd.read_csv('./datasets/steam_games.csv')

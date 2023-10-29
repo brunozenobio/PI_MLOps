@@ -12,7 +12,7 @@ def developer_func(desarrollador:str):
     steam_games['Year'] = steam_games['Year'].astype(int)
     
     
-    if desarrollador.capitalize() not in steam_games['developer'].values:
+    if desarrollador.strip().lower() not in list(steam_games['developer'].str.strip().str.lower()):
         return "No se ha encontrado ese desarrollador"  # Devuelve el mensaje si no se encuentra en el DataFrame
     
     items_por_año = steam_games[steam_games['developer'].str.lower() == desarrollador.lower()].groupby('Year')['id'].count().reset_index()
@@ -103,6 +103,8 @@ def developer_rec_func(desarrolladora:str):
         return {desarrolladora:[f'Negative = {int(false_value)}',f'Positive = {int(true_value)}']}
     
     
+
+    
     
 def user_recommend_fuc(user:str):
     """
@@ -120,32 +122,36 @@ def user_recommend_fuc(user:str):
         model = pickle.load(archivo)
 
     # Cargo las reseñas de usuarios 
-    user_reviews = pd.read_csv('./datasets/user_reviews_model.csv',usecols=['user_id','user_id_num','item_id','sentiment_analysis'])
-
+    user_reviews = pd.read_csv('./datasets/user_reviews_model.csv',usecols=['user_id','user_id_num','item_id'])
+    if user.lower() not in user_reviews['user_id'].str.lower():
+        return {'No hay recomendacioenes para ese usuario'}
     # Cargo la lista de juegos de steam
     df_steam = pd.read_csv('./datasets/steam_games.csv')
-
+    user_reviews_id = user_reviews[user_reviews['user_id'] != user]
+    user_game = pd.merge(df_steam[['id','app_name']],user_reviews_id,left_on='id',right_on='item_id',how='inner')
     user_rec = user_reviews[user_reviews['user_id'] == user]['user_id_num'].iloc[0]
     # Predecir la puntuación del usuario para cada juego
-    predictions = [model.predict(user_rec, item_id) for item_id in user_reviews['item_id']]
-    recommendations = sorted(predictions, key=lambda x: x.est, reverse=True) # Obtén las mejores 5 recomendaciones
+    predicciones = pd.DataFrame()
+    predicciones['app_name'] = user_game['app_name']
+    predicciones['score'] = user_game['id'].apply(lambda x:model.predict(user_rec,x).est)
+    predicciones.sort_values(by='score',ascending=False,inplace=True)
+    # recommendations = sorted(predictions, key=lambda x: x.est, reverse=True) 
 
     # Convertir las recomendaciones en un DataFrame de pandas
-    recommendations = pd.DataFrame(recommendations)
 
     # Eliminar duplicados basados en el id del juego
-    recommendations = recommendations.drop_duplicates(subset='iid')
 
     # Mergeo la lista de juegos con las recomendaciones en base al id del juego
-    merge = pd.merge(df_steam[['app_name','id']],recommendations,left_on='id',right_on='iid',how='right')
 
-    rec = merge[['app_name']].dropna()[:5].values.tolist()
-
+    #rec = merge[['app_name']].dropna()[:5].values.tolist()
+    predicciones.dropna(inplace=True)
+    predicciones.drop_duplicates(subset='app_name',inplace=True)
+    top_5 = predicciones.head(5)
     # Retornar los juegos como un diccionario
     return {
-        'Recomendacion 1 ': rec[0][0],
-        'Recomendacion 2 ': rec[1][0],
-        'Recomendacion 3 ': rec[2][0],
-        'Recomendacion 4 ': rec[3][0],
-        'Recomendacion 5 ': rec[4][0]
+        'Recomendacion 1 ': top_5['app_name'].iloc[0],
+        'Recomendacion 2 ': top_5['app_name'].iloc[1],
+        'Recomendacion 3 ': top_5['app_name'].iloc[2],
+        'Recomendacion 4 ': top_5['app_name'].iloc[3],
+        'Recomendacion 5 ': top_5['app_name'].iloc[4]
     }

@@ -48,8 +48,8 @@ def developer_func(desarrollador:str):
 
 ####### FUNCION 2 ########
 def userdata_func(User_id:str):
-    items_reviews_users = pd.read_csv('datasets/items_reviews_users.csv')
-    user = items_reviews_users[items_reviews_users['user_id'].str.lower() == User_id.lower()]
+    items_reviews_users = pd.read_csv('datasets/items_reviews_users.csv') # Cargo el casv
+    user = items_reviews_users[items_reviews_users['user_id'] == User_id] # Genero un dataframe de una fila con el user, y las caracteristicas
     if user.empty:
         return "Usuario no encontrado"
     
@@ -67,15 +67,15 @@ def userdata_func(User_id:str):
 ####### FUNCION 3 ########
 
 def UserForGenre_func(genero:str):
-    users_gen = pd.read_csv('./datasets/max_por_gen.csv')
+    users_gen = pd.read_csv('./datasets/max_por_gen.csv') # Cargo el csv de los generos con usuarios con mas horas
     if genero.lower() not in [x.lower() for x in users_gen['Género'].tolist()]:
         return "No se encontró ese genero"
     
-    gen = users_gen[users_gen['Género'].str.lower() == genero.lower()]
+    gen = users_gen[users_gen['Género'].str.lower() == genero.lower()] # Busco el genero especificado
         
-    return {
+    return { 
         'Usuario':gen['Usuario'].tolist(),
-        'Horas jugadas':gen['Año_Horas'].tolist()     
+        'Horas jugadas':gen['Año_Horas'].tolist()      
     }
     
     

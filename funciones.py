@@ -218,7 +218,7 @@ def user_recommend_fuc(user:str):
 
 def item_recommend_func(item_id):
     # Cargar datos relevantes desde un archivo CSV.
-    perfiles_items_df = pd.read_csv('../datasets/data_standar_nearest_model.csv')
+    perfiles_items_df = pd.read_csv('./datasets/data_standar_nearest_model.csv')
     
     if item_id not in list(perfiles_items_df['id']):
         return {'Ese id no pertenece a un item registrado'}

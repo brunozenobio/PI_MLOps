@@ -143,7 +143,7 @@ def developer_rec_func(desarrolladora:str):
     # Verificar si se encuentra los juegos del desarrollador en el dataset
     if func_5.empty:
         # En caso de que no se encuentre, se muestra mensaje indicando que no hay comentarios para este desarrollador
-        return 'No se enocntraron reviews para items que hayan salido ese año'
+        return 'No se enocntraron reviews para ese desarrollador'
     # En caso contrario, contar los sentimientos de análisis de comentarios
     # Cuenta los comentarios positivos
     true_value = func_5[func_5['sentiment_analysis']==2]['sentiment_analysis'].count()
@@ -174,10 +174,10 @@ def user_recommend_fuc(user:str):
     # Cargo las reseñas de usuarios 
     user_reviews = pd.read_csv('./datasets/user_reviews_model.csv',usecols=['user_id','user_id_num','item_id'])
     # Si no encuentra al usuario lo busca en items al usuario con mas horas y recomienda en base a la funcion de recomendacion por items.
-    if user not in list(user_reviews['user_id']):
+    if  not user_reviews['user_id'].eq(user).any():
         user_item_max_horas = pd.read_csv('./datasets/user_item_max_horas.csv')
-        if user not in list(user_item_max_horas['user_id']):
-            return {'Ese usuario no existe en la base de datos.'}
+        if  not user_item_max_horas['user_id'].eq(user).any():
+            return 'Ese usuario no existe en la base de datos.'
         else:
             item = user_item_max_horas['item_id']
             item_recommend_func(item)
@@ -223,7 +223,7 @@ def item_recommend_func(item_id):
     if item_id not in list(perfiles_items_df['id']):
         return {'Ese id no pertenece a un item registrado'}
     else:
-        item_name = perfiles_items_df[perfiles_items_df['id'] == item_id]['app_name']
+        item_name = perfiles_items_df.loc[perfiles_items_df['id'] == item_id, 'app_name'].iloc[0]
 
     # Eliminar la columna 'app_name' de los datos.
     data_model = perfiles_items_df.drop(['app_name'], axis=1)

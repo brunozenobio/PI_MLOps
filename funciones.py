@@ -220,8 +220,8 @@ def item_recommend_func(item_id):
     # Cargar datos relevantes desde un archivo CSV.
     perfiles_items_df = pd.read_csv('./datasets/data_standar_nearest_model.csv')
     
-    if item_id not in list(perfiles_items_df['id']):
-        return {'Ese id no pertenece a un item registrado'}
+    if not perfiles_items_df['id'].eq(item_id).any():
+        return 'Ese id no pertenece a un item registrado'
     else:
         item_name = perfiles_items_df.loc[perfiles_items_df['id'] == item_id, 'app_name'].iloc[0]
 

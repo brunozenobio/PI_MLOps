@@ -233,7 +233,7 @@ def item_recommend_func(item_id):
     data_standar = scaler.fit_transform(data_model)
 
     # Importamos modelo preentrenado de KNN
-    with open('./NearestNeighnors.pkl', 'rb') as file:  
+    with open('./model/NearestNeighnors.pkl', 'rb') as file:  
         knn_model = pickle.load(file)
 
     # Obtener el índice del artículo basado en su nombre.

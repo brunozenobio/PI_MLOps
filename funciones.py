@@ -1,7 +1,8 @@
 import pandas as pd
 import pickle
 from surprise import SVD
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.neighbors import NearestNeighbors
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 ####### FUNCION 1 ########
@@ -172,8 +173,14 @@ def user_recommend_fuc(user:str):
 
     # Cargo las reseñas de usuarios 
     user_reviews = pd.read_csv('./datasets/user_reviews_model.csv',usecols=['user_id','user_id_num','item_id'])
+    # Si no encuentra al usuario lo busca en items al usuario con mas horas y recomienda en base a la funcion de recomendacion por items.
     if user not in list(user_reviews['user_id']):
-        return {'No hay recomendacioenes para ese usuario'}
+        user_item_max_horas = pd.read_csv('./datasets/user_item_max_horas.csv')
+        if user not in list(user_item_max_horas['user_id']):
+            return {'Ese usuario no existe en la base de datos.'}
+        else:
+            item = user_item_max_horas['item_id']
+            item_recommend_func(item)
     # Cargo la lista de juegos de steam
     df_steam = pd.read_csv('./datasets/steam_games.csv')
     user_reviews_id = user_reviews[user_reviews['user_id'] != user]
@@ -209,63 +216,41 @@ def user_recommend_fuc(user:str):
     
 ####### FUNCION 7 ########
 
-def item_rec(app_name:int):
-    steam_games = pd.read_csv('./datasets/steam_games.csv')
+def item_recommend_func(item_id):
+    # Cargar datos relevantes desde un archivo CSV.
+    perfiles_items_df = pd.read_csv('../datasets/data_standar_nearest_model.csv')
+    
+    if item_id not in list(perfiles_items_df['id']):
+        return {'Ese id no pertenece a un item registrado'}
+    else:
+        item_name = perfiles_items_df[perfiles_items_df['id'] == item_id]['app_name']
 
-    # Creamos una lista con cada género de videojuego disponible en la base de datos
-    generos = list(steam_games.drop(columns=['app_name','price','id','developer','Accounting','Year']).columns)
+    # Eliminar la columna 'app_name' de los datos.
+    data_model = perfiles_items_df.drop(['app_name'], axis=1)
 
-    # Creamos una lista vacía para guardar los perfiles de los elementos
-    perfiles_items = []
+    # Inicializar y ajustar el escalador de características.
+    scaler = StandardScaler()
+    data_standar = scaler.fit_transform(data_model)
 
-    # Recorremos el DataFrame de los juegos
-    for _, row in steam_games.iterrows():
-        # Creamos una lista vacía para el perfil del elemento
-        perfil_item = []
-        for genero in generos:
-            # Agregamos el valor de cada género al perfil del elemento
-            perfil_item.append(row[genero])
-        # Agregamos el perfil del elemento a los perfiles de los elementos
-        perfiles_items.append(perfil_item)
+    # Importamos modelo preentrenado de KNN
+    with open('./NearestNeighnors.pkl', 'rb') as file:  
+        knn_model = pickle.load(file)
 
-    # Convertimos la lista de perfiles de elementos en un DataFrame
-    perfiles_items_df = pd.DataFrame(perfiles_items, columns=generos)
+    # Obtener el índice del artículo basado en su nombre.
+    
+    item_index = perfiles_items_df[perfiles_items_df['app_name'] == item_name].index[0]
 
-    # Agregamos las columnas de nombre de aplicación e id al DataFrame de perfiles de elementos
-    perfiles_items_df['app_name'] = steam_games['app_name']
-    perfiles_items_df['id'] = steam_games['id']
+    # Recuperar los vecinos más cercanos al artículo especificado.
+    distances, indices = knn_model.kneighbors([data_standar[item_index]])
 
-    # Si el nombre de la aplicación ingresado no se encuentra en la lista de ids del DataFrame
-    if app_name not in list(steam_games['id']):
-        # Regresamos un mensaje que el item no fue encontrado
-        return 'EL item no se a podido encontrar'
+    # Crear un diccionario para almacenar las recomendaciones.
+    recomendaciones = {}
+    for i in range(1, len(indices[0])):  # Ignorar el primer vecino (ya que es el artículo mismo).
+        # Identificar el índice y el nombre del artículo recomendado.
+        recommended_item_index = indices[0][i]
+        recommended_item_name = perfiles_items_df.loc[recommended_item_index, 'app_name']
+        # Agregar recomendación al diccionario.
+        recomendaciones[f"Recomendacion {i}"] = recommended_item_name
 
-    # Obtenemos el índice de la aplicación en el DataFrame de perfiles de elementos
-    app_index = perfiles_items_df[perfiles_items_df['id'] == app_name].index[0]
-
-    # Creamos una matriz con los valores del DataFrame de perfiles de elementos sin las columnas de nombre de aplicación e id
-    perfiles_items_array = perfiles_items_df.drop(columns=['app_name','id']).values
-
-    # Obtenemos el perfil de la aplicación en la matriz de perfiles de elementos
-    app_profile = perfiles_items_array[app_index].reshape(1, -1)
-
-    # Calculamos la similitud del coseno entre el perfil de la aplicación y todos los perfiles de elementos en la matriz de perfiles de elementos
-    similarity_scores = cosine_similarity(app_profile, perfiles_items_array)
-
-    # Ordenamos los scores de similitud en orden descendiente y seleccionamos los primeros cinco
-    recommended_games = np.argsort(similarity_scores[0])[::-1][:5]
-
-    # Obtenemos los índices de los juegos recomendados en el DataFrame de perfiles de elementos
-    recommended_game_indices = perfiles_items_df.index[recommended_games]
-
-    # Obtenemos los nombres de los juegos recomendados en el DataFrame de perfiles de elementos
-    recommended_game_names = perfiles_items_df.loc[recommended_game_indices, 'app_name']
-
-    # Regresamos un diccionario con los nombres de los juegos recomendados
-    return {
-        'Recomendación 1':recommended_game_names.iloc[0],
-        'Recomendación 2':recommended_game_names.iloc[1],
-        'Recomendación 3':recommended_game_names.iloc[2],
-        'Recomendación 4':recommended_game_names.iloc[3],
-        'Recomendación 5':recommended_game_names.iloc[4]
-            }
+    # Devolver las recomendaciones como resultado.
+    return recomendaciones

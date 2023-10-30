@@ -180,7 +180,7 @@ def user_recommend_fuc(user:str):
             return 'Ese usuario no existe en la base de datos.'
         else:
             item = user_item_max_horas.loc[user_item_max_horas['user_id'] == user,'item_id']
-            item_recommend_func(item)
+            item_recommend_func(item.iloc[0])
     # Cargo la lista de juegos de steam
     df_steam = pd.read_csv('./datasets/steam_games.csv')
     user_reviews_id = user_reviews[user_reviews['user_id'] != user]
@@ -216,7 +216,7 @@ def user_recommend_fuc(user:str):
     
 ####### FUNCION 7 ########
 
-def item_recommend_func(item_id):
+def item_recommend_func(item_id:int):
     # Cargar datos relevantes desde un archivo CSV.
     perfiles_items_df = pd.read_csv('./datasets/data_standar_nearest_model.csv')
     

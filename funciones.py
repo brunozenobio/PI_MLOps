@@ -80,15 +80,7 @@ def UserForGenre_func(genero:str):
     
     
 ####### FUNCION 4 ########
-"""
-Esta función toma un año como entrada y devuelve los desarrolladores con la mayor cantidad de recomendaciones en ese año. 
-Para esto, utiliza dos conjuntos de datos: 'steam_games.csv' (contiene información sobre los juegos) y 'user_reviews.csv' 
-(contiene las reseñas de los usuarios para los juegos). Primero, los juegos con valores faltantes se eliminan, luego, el año 
-de lanzamiento de los juegos se convierte en un entero. Los dos conjuntos de datos se unen en 'id' y se filtran para obtener 
-solo los juegos lanzados en el año dado. A continuación, se agrupan los datos por desarrollador y se cuentan las recomendaciones 
-para cada desarrollador. Si ningún desarrollador tiene revisiones en ese año, devuelve un mensaje indicando que no se encontraron 
-revisiones para los juegos lanzados en ese año. En caso contrario, devuelve los tres primeros desarrolladores con más recomendaciones.
-"""
+
 def best_developer_year_func(year:int):
     # Carga los datos de los juegos de steam
     steam_games = pd.read_csv('./datasets/steam_games.csv')
@@ -161,8 +153,7 @@ def user_recommend_fuc(user:str):
     Esta función recomienda los 5 mejores juegos para un usuario especificado.
 
     Params:
-    user:str - nombre del usuario al que se le recomendarán los juegos.
-
+    user:str - id del item para hacer la recomendacion.
     Returns:
     Diccionario con los nombres de los 5 juegos recomendados.
     """

@@ -99,7 +99,7 @@ def item_recommend(item_id:int):
     Esta función recomienda 5 items  dado un item especifico.
 
     Params:
-    item_id:int - nombre del usuario al que se le recomendarán los juegos.
+    item_id:int - id del item del cual se quieren recomendar
 
     Returns:
     Diccionario con los nombres de los 5 juegos recomendados.

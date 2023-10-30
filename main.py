@@ -105,6 +105,6 @@ def item_recommend(item_id:int):
     Diccionario con los nombres de los 5 juegos recomendados.
     """
     try:
-        return item_rec(item_id)
+        return item_recommend_func(item_id)
     except Exception as e:
         return {"Error":str(e)}
